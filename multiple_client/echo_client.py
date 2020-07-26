@@ -1,4 +1,7 @@
-import asyncore,six,socket
+import asyncore
+import six
+import socket
+
 from six.moves import queue
 
 
@@ -23,10 +26,10 @@ class Client(asyncore.dispatcher):
 
     def handle_read(self):
         msg = six.ensure_str(self.recv(1024))
-        six.print_("{} received message {}".format(self.name,msg))
+        six.print_("{} received message {}".format(self.name, msg))
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     client1 = Client("localhost", 33020, "client1")
     client2 = Client("localhost", 33020, "client2")
     client3 = Client("localhost", 33020, "client3")

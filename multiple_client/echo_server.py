@@ -1,5 +1,6 @@
 import asyncore
 import socket
+
 import six
 from six.moves import queue
 
@@ -13,9 +14,9 @@ class Server(asyncore.dispatcher):
         self.client_handlers = []
 
     def handle_accept(self):
-        socket, info = self.accept()
+        sock, info = self.accept()
         six.print_("accepted client {}".format(info))
-        self.client_handlers.append(ClientHandler(self, socket, info))
+        self.client_handlers.append(ClientHandler(self, sock, info))
 
     def broadcast(self, sender_socket, message):
         six.print_("broadcasting message {}".format(message))
@@ -32,7 +33,6 @@ class Server(asyncore.dispatcher):
 
 
 class ClientHandler(asyncore.dispatcher):
-
     def __init__(self, server, socket, info):
         asyncore.dispatcher.__init__(self, socket)
         self.server = server
@@ -61,7 +61,3 @@ if __name__ == "__main__":
 
     six.print_("loop()")
     asyncore.loop()
-
-
-
-

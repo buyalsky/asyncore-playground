@@ -1,4 +1,7 @@
-import asyncore, six, socket, sys, select
+import select
+import six
+import socket
+import sys
 
 
 def prompt():
@@ -7,7 +10,6 @@ def prompt():
 
 
 if __name__ == "__main__":
-
     c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     c.connect(("localhost", 3230))
 

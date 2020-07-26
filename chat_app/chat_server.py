@@ -1,5 +1,6 @@
 import asyncore
 import socket
+
 import six
 from six.moves import queue
 
@@ -13,19 +14,19 @@ class Server(asyncore.dispatcher):
         self.client_handlers = []
 
     def handle_accept(self):
-        socket, info = self.accept()
+        sock, info = self.accept()
         six.print_("accepted client {}".format(info))
-        self.client_handlers.append(ClientHandler(self, socket, info))
+        self.client_handlers.append(ClientHandler(self, sock, info))
         six.print_("{} entered the chat server".format(info))
-        self.broadcast(socket,"{} entered the chat server\n".format(info))
+        self.broadcast(sock, "{} entered the chat server\n".format(info))
 
     def broadcast(self, sender_socket, message):
         six.print_("broadcasting message {}".format(message))
         for client_handler in self.client_handlers:
-            if client_handler!=sender_socket:
+            if client_handler != sender_socket:
                 try:
-                    client_handler.say(six.b('\r''<' + str(sender_socket.getpeername()[1]) + '> '+message))
-                except:
+                    client_handler.say(six.b('\r''<' + str(sender_socket.getpeername()[1]) + '> ' + message))
+                except socket.error:
                     client_handler.close()
                     self.client_handlers.remove(client_handler)
 
@@ -34,11 +35,10 @@ class Server(asyncore.dispatcher):
 
 
 class ClientHandler(asyncore.dispatcher):
-
-    def __init__(self, server, socket, info):
-        asyncore.dispatcher.__init__(self,socket)
-        self.server = server
-        self.socket = socket
+    def __init__(self, server_, sock, info):
+        asyncore.dispatcher.__init__(self, sock)
+        self.server = server_
+        self.socket = sock
         self.info = info
         self.message_box = queue.Queue(maxsize=20)
 
@@ -58,14 +58,9 @@ class ClientHandler(asyncore.dispatcher):
             self.send(msg)
 
 
-
 if __name__ == "__main__":
     server = Server("localhost", 3230)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     six.print_("loop()")
     asyncore.loop()
-
-
-
-
